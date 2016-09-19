@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -141,6 +142,18 @@ public class GoogleVisionApiClient {
 		return resultados;
 	}
 	 
+	public ResultadoVisionAPI enviarImagemParaVisionAPI(String caminhoImagem) {
+		List<String> caminhosImagem = Arrays.asList(caminhoImagem);
+		List<ResultadoVisionAPI> resultados = enviarImagensParaEfetuarOCR(caminhosImagem);
+		ResultadoVisionAPI resultadoFinal = new ResultadoVisionAPI();
+		for (ResultadoVisionAPI resultado : resultados) {
+			resultadoFinal = resultado;
+			break;
+		}
+		return resultadoFinal;
+	}
+	
+	
 	private Image realizaLeituraDaImagem(String caminhoImagem) {
 		byte[] data = null;
 		try {
