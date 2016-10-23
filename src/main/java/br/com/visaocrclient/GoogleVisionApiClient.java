@@ -12,6 +12,8 @@ import org.apache.log4j.Logger;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.vision.v1.Vision;
 import com.google.api.services.vision.v1.VisionScopes;
@@ -61,8 +63,8 @@ public class GoogleVisionApiClient {
 	private void inicializaVision() {
 		try {
 			vision = new Vision.Builder(GoogleNetHttpTransport.newTrustedTransport(), 
-					JacksonFactory.getDefaultInstance(), 
-					credential).setApplicationName("Google-VisionLabelSample/1.0").build();
+					JacksonFactory.getDefaultInstance(),
+					setHttpTimeout(credential)).setApplicationName("Google-VisionLabelSample/1.0").build();
 		} catch (GeneralSecurityException e) {
 			LOGGER.error("Problemas de seguranca ao criar a api Vision do Google", e);
 		} catch (IOException e) {
@@ -165,4 +167,15 @@ public class GoogleVisionApiClient {
 		return conteudoImagemBase64;
 	}
 	
+	
+	private HttpRequestInitializer setHttpTimeout(final HttpRequestInitializer requestInitializer) {
+		  return new HttpRequestInitializer() {
+		    @Override
+		    public void initialize(HttpRequest httpRequest) throws IOException {
+		      requestInitializer.initialize(httpRequest);
+		      httpRequest.setConnectTimeout(3 * 60000);  // 3 minutes connect timeout
+		      httpRequest.setReadTimeout(3 * 60000);  // 3 minutes read timeout
+		    }
+		  };
+	}
 }
